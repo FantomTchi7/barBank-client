@@ -8,6 +8,7 @@ import babel from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
+import copy from "rollup-plugin-copy"
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -43,6 +44,18 @@ export default {
 			resolve({
 				browser: true,
 				dedupe: ['svelte']
+			}),
+			copy({
+				targets: [{
+					src: 'node_modules/bootstrap/dist/**/*',
+					dest: 'static/vendor/bootstrap'
+				}]
+			}),
+			copy({
+				targets: [{
+					src: 'node_modules/jquery/dist/**/*',
+					dest: 'static/vendor/jquery'
+				}]
 			}),
 			commonjs(),
 
