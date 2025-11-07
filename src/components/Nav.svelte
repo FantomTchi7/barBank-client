@@ -51,5 +51,7 @@
 <nav>
 	<ul>
 		<li><a rel=prefetch aria-current="{segment === 'register' ? 'page' : undefined}" href="register">register</a></li>
+		<li><a rel=prefetch aria-current="{segment === 'login' ? 'page' : undefined}" href="login">login</a></li>
+		<li><a rel=prefetch aria-current="{segment === 'games' ? 'page' : undefined}" href="games">view games</a></li>
 	</ul>
 </nav>
