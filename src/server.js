@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser';
 import sirv from 'sirv';
 import polka from 'polka';
 import compression from 'compression';
@@ -8,6 +9,7 @@ const dev = NODE_ENV === 'development';
 
 polka() // You can also use Express
 	.use(
+		bodyParser.json(),
 		compression({ threshold: 0 }),
 		sirv('static', { dev }),
 		sapper.middleware()

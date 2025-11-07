@@ -1,29 +1,43 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post } from 'utils.js';
-
+	
 	const { session } = stores();
 
 	let username = '';
 	let email = '';
 	let password = '';
-	let error = null;
 
-	async function submit(event) {
+	let errorMessage = null;
+
+    async function post(path, data) {
+        const response = await fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return await response.json();
+    }
+
+
+	async function submit() {
+		errorMessage = null; 
+
 		const response = await post(`auth/register`, { username, email, password });
 
-		// TODO handle network errors
-		error = response.errors;
-
-		if (response.user) {
-			$session.user = response.user;
+		if (response.error) {
+			errorMessage = response.error;
+		} 
+		else if (response._id) {
+			$session.user = response;
 			goto('/');
-		}
+		} else {
+            errorMessage = 'An unknown error occurred during registration.'
+        }
 	}
 </script>
 
 <svelte:head>
-	<title>Sign up • Conduit</title>
+	<title>Sign up • Accounts</title>
 </svelte:head>
 
 <div class="auth-page">
@@ -35,13 +49,15 @@
 					<a href="/login">Have an account?</a>
 				</p>
 
-				{#if error}
-					<div class="error">{error}</div>
+				{#if errorMessage}
+					<ul class="error-messages">
+						<li>{errorMessage}</li>
+					</ul>
 				{/if}
 
 				<form on:submit|preventDefault={submit}>
 					<fieldset class="form-group">
-						<input class="form-control form-control-lg" type="text" required placeholder="Your Name" bind:value={username}>
+						<input class="form-control form-control-lg" type="text" required placeholder="Username" bind:value={username}>
 					</fieldset>
 					<fieldset class="form-group">
 						<input class="form-control form-control-lg" type="email" required placeholder="Email" bind:value={email}>
@@ -49,7 +65,7 @@
 					<fieldset class="form-group">
 						<input class="form-control form-control-lg" type="password" required placeholder="Password" bind:value={password}>
 					</fieldset>
-					<button class="btn btn-lg btn-primary pull-xs-right">
+					<button class="btn btn-lg btn-primary pull-xs-right" type="submit">
 						Sign up
 					</button>
 				</form>
